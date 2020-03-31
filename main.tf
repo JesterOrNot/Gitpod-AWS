@@ -10,7 +10,7 @@ variable "aws" {
         region = "us-east-2"
         ami = "ami-0fc20dd1da406780b"
         profile = "default"
-        key_name = "gitpod"
+        key_name = "ubuntu"
         instance_type = "t2.micro"
     }
 }
