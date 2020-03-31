@@ -1,23 +1,25 @@
-variable "region" {
-    default = "us-east-2"
-}
-variable "ami" {
-    default = "ami-0fc20dd1da406780b"
+variable "aws" {
+    type = object({
+        region = string
+        ami = string
+        profile = string
+        key_name = string
+        instance_type = string
+    })
+    default = {
+        region = "us-east-2"
+        ami = "ami-0fc20dd1da406780b"
+        profile = "default"
+        key_name = "gitpod"
+        instance_type = "t2.micro"
+    }
 }
 provider "aws" {
-  profile = "default"
-  region  = var.region
+  profile = var.aws.profile
+  region  = var.aws.region
 }
 resource "aws_instance" "Gitpod-AWS" {
-  ami           = var.ami
-  instance_type = "t2.micro"
-  provisioner "remote-exec" {
-    inline = [
-      "./clone.sh",
-      "./deps.sh",
-      "helm repo add charts.gitpod.io https://charts.gitpod.io",
-      "helm dep update",
-      "helm upgrade --install $(for i in $(cat configuration.txt); do echo -e \"-f $i\"; done) gitpod ."
-    ]
-  }
+  ami           = var.aws.ami
+  instance_type = var.aws.instance_type
+  key_name = var.aws.key_name
 }
