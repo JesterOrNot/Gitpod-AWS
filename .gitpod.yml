@@ -4,4 +4,6 @@ vscode:
   extensions:
     - mauve.terraform@1.4.0:27r9VdcnEIBpa1jdjPSXdA==
 tasks:
-  - command: terraform init
+  - command: |
+      cd src
+      terraform init
