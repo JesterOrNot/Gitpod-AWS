@@ -15,3 +15,9 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
     && cd .. \
     && sudo rm -rf awscli \
     && bash -c "complete -C '/usr/local/bin/aws_completer' aws"
+
+COPY . /tmp
+
+WORKDIR /tmp
+
+RUN ./deps.sh
