@@ -16,9 +16,11 @@ variable "aws" {
 }
 variable "kubernetes" {
   type = object({
-    cluster-name = string
+    cluster-name = string,
+    vpc-name = string
   })
   default = {
     cluster-name = "gitpod-cluster"
+    vpc-name = "terraform-eks-gitpod-node"
   }
 }
