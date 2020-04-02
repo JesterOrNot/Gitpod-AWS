@@ -12,4 +12,5 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
     && sudo unzip awscliv2.zip \
     && sudo ./aws/install \
     && cd .. \
-    && sudo rm -rf awscli
+    && sudo rm -rf awscli \
+    && bash -c "complete -C '/usr/local/bin/aws_completer' aws"
