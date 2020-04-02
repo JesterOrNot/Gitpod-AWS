@@ -1,5 +1,5 @@
-data "aws_availability_zones" "available" {
-}
+# Get all available zones
+data "aws_availability_zones" "available" {}
 
 # To use EKS one needs a VPC or Virtual Private Cloud for base networking and this adds it
 resource "aws_vpc" "demo" {
