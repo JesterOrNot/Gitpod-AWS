@@ -2,7 +2,7 @@ FROM gitpod/workspace-full
 
 USER gitpod
 
-RUN brew install terraform
+RUN brew install terraform kubectl
 
 WORKDIR /tmp/awscli
 
