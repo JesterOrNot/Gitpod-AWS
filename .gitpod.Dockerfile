@@ -2,7 +2,10 @@ FROM gitpod/workspace-full
 
 USER gitpod
 
-RUN brew install terraform kubectl
+RUN brew install terraform
+
+RUN brew install kubectl \
+    && kubectl completion bash >/etc/bash_completion.d/kubectl
 
 WORKDIR /tmp/awscli
 
