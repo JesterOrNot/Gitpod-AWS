@@ -3,7 +3,7 @@ FROM gitpod/workspace-full
 USER gitpod
 
 RUN brew install terraform kubectl \
-    && sudo bash -cl "kubectl completion bash >/etc/bash_completion.d/kubectl"
+    && sudo bash -c "echo 'source <(kubectl completion bash)' >>~/.bashrc"
 
 WORKDIR /tmp/awscli
 
