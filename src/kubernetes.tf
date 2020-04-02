@@ -1,6 +1,7 @@
 data "aws_availability_zones" "available" {
 }
 
+# To use EKS one needs a VPC or Virtual Private Cloud for base networking and this adds it
 resource "aws_vpc" "demo" {
   cidr_block = "10.0.0.0/16"
 
@@ -10,6 +11,7 @@ resource "aws_vpc" "demo" {
   }
 }
 
+# This will route external traffic through internet gateway
 resource "aws_subnet" "demo" {
   count = 2
 
@@ -23,6 +25,7 @@ resource "aws_subnet" "demo" {
   }
 }
 
+# This is our Internet Gateway
 resource "aws_internet_gateway" "demo" {
   vpc_id = aws_vpc.demo.id
 
@@ -31,6 +34,7 @@ resource "aws_internet_gateway" "demo" {
   }
 }
 
+# Define  Routes
 resource "aws_route_table" "demo" {
   vpc_id = aws_vpc.demo.id
 
@@ -40,6 +44,7 @@ resource "aws_route_table" "demo" {
   }
 }
 
+# Associations for route table
 resource "aws_route_table_association" "demo" {
   count = 2
 
@@ -47,6 +52,7 @@ resource "aws_route_table_association" "demo" {
   route_table_id = aws_route_table.demo.id
 }
 
+# Allow EKS to interact with AWS stuffs
 resource "aws_iam_role" "demo-node" {
   name = "terraform-eks-demo-cluster"
 
@@ -66,16 +72,19 @@ resource "aws_iam_role" "demo-node" {
 POLICY
 }
 
+# Attatchments
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSClusterPolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
   role       = aws_iam_role.demo-node.name
 }
 
+# Attatchments
 resource "aws_iam_role_policy_attachment" "demo-cluster-AmazonEKSServicePolicy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
   role       = aws_iam_role.demo-node.name
 }
 
+# Networking Access to Kubernetes
 resource "aws_security_group" "demo-cluster" {
   name        = "terraform-eks-demo-cluster"
   description = "Cluster communication with worker nodes"
@@ -93,6 +102,7 @@ resource "aws_security_group" "demo-cluster" {
   }
 }
 
+# Allow me to Access Cluster from a workstation
 resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
   cidr_blocks       = ["34.82.79.165/32"]
   description       = "Allow workstation to communicate with the cluster API Server"
@@ -103,6 +113,7 @@ resource "aws_security_group_rule" "demo-cluster-ingress-workstation-https" {
   type              = "ingress"
 }
 
+# The Kubernetes Cluster!
 resource "aws_eks_cluster" "demo" {
   name     = var.kubernetes.cluster-name
   role_arn = aws_iam_role.demo-node.arn
