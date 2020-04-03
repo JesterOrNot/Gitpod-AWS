@@ -5,10 +5,6 @@ vscode:
   extensions:
     - mauve.terraform@1.4.0:27r9VdcnEIBpa1jdjPSXdA==
 tasks:
-  - init: |
+  - command: |
       cd src
-      git clone "git://github.com/gitpod-io/self-hosted"
-      mv *.tf self-hosted
-      cd self-hosted
       terraform init
-      echo 'yes' | terraform apply
