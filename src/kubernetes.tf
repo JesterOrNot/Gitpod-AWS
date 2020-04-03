@@ -117,6 +117,16 @@ resource "aws_security_group_rule" "gitpod-cluster-ingress-workstation-https" {
 resource "aws_eks_cluster" "gitpod" {
   name     = var.kubernetes.cluster-name
   role_arn = aws_iam_role.gitpod-node.arn
+  
+  # Install Gitpod!
+  provisioner "local-exec" {
+      command = <<END
+      ./scripts/deps.sh \
+      && helm repo add charts.gitpod.io https://charts.gitpod.io \
+      && helm dep update \
+      && helm upgrade --install $(for i in $(cat configuration.txt); do echo -e \"-f $i\"; done) gitpod .
+      END
+  }
 
   vpc_config {
     security_group_ids = [aws_security_group.gitpod-cluster.id]
