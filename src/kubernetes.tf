@@ -1,7 +1,7 @@
 # Get all available zones
 data "aws_availability_zones" "available" {}
 
-# To use EKS one needs a VPC or Virtual Private Cloud for base networking and this adds it
+# To use EKS one needs a VPC or Virtual Private Cloud for base networking and this adds it.
 resource "aws_vpc" "gitpod" {
   cidr_block = "10.0.0.0/16"
 
