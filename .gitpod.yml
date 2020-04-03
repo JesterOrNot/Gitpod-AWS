@@ -11,4 +11,4 @@ tasks:
       mv *.tf self-hosted
       cd self-hosted
       terraform init
-      terraform apply
+      echo 'yes' | terraform apply
