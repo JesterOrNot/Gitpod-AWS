@@ -21,6 +21,3 @@ COPY . /tmp
 WORKDIR /tmp
 
 RUN ./deps.sh
-
-RUN cd "/tmp/vscode-extensions/mauve.terraform@1.4.0/extension/lspbin" \
-    && terraform init
