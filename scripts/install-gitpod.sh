@@ -3,26 +3,26 @@
 set -x
 
 cd src || exit
-
 terraform init
-echo 'yes' | terraform apply || echo 'yes' | terraform destroy
-
-aws eks --region us-east-2 update-kubeconfig --name gitpod-cluster
-
-terraform output config_map_aws_auth > config_map_aws_auth.yaml
-
-kubectl apply -f config_map_aws_auth.yaml
-
-if ! [ -d self-hosted ]
-then
-    git clone "git://github.com/gitpod-io/self-hosted"
+did_fail="failed"
+echo 'yes' | terraform apply $@ || did_fail=""
+if [ -z $did_fail ]; then
+	echo 'yes' | terraform destroy
+	exit
 fi
-
-cd self-hosted
-
-helm repo add bitnami "https://charts.bitnami.com/bitnami"
+aws eks --region "$(cat <(terraform output region))" update-kubeconfig --name "$(cat <(terraform output cluster_name))"
+kubectl apply -f <(terraform output config_map_aws_auth)
+if ! [ -d self-hosted ]; then
+	git clone "https://github.com/gitpod-io/self-hosted.git"
+fi
+cd self-hosted || exit
+kubectl create -f utils/helm-2-tiller-sa-crb.yaml
 helm repo add charts.gitpod.io "https://charts.gitpod.io"
 helm dep update
-helm repo update
-helm install nginx bitnami/nginx
-helm install gitpod .
+if [ -f "configuration.txt" ]; then
+	helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
+else
+	helm install gitpod .
+fi
+cd .. || exit
+rm -rf self-hosted

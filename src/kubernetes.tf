@@ -1,35 +1,3 @@
-# Allow EKS to interact with AWS stuffs
-resource "aws_iam_role" "gitpod-cluster" {
-  name = "terraform-eks-gitpod-cluster"
-
-  assume_role_policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Service": "eks.amazonaws.com"
-      },
-      "Action": "sts:AssumeRole"
-    }
-  ]
-}
-POLICY
-}
-
-# Attatchments
-resource "aws_iam_role_policy_attachment" "gitpod-cluster-AmazonEKSClusterPolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
-  role       = aws_iam_role.gitpod-cluster.name
-}
-
-# Attatchments
-resource "aws_iam_role_policy_attachment" "gitpod-cluster-AmazonEKSServicePolicy" {
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSServicePolicy"
-  role       = aws_iam_role.gitpod-cluster.name
-}
-
 # Networking Access to Kubernetes
 resource "aws_security_group" "gitpod-cluster" {
   name        = "terraform-eks-gitpod-cluster"
@@ -50,7 +18,7 @@ resource "aws_security_group" "gitpod-cluster" {
 
 # Allow me to Access Cluster from a workstation
 resource "aws_security_group_rule" "gitpod-cluster-ingress-workstation-https" {
-  cidr_blocks       = ["34.82.79.165/32"]
+  cidr_blocks       = [local.workstation-external-cidr]
   description       = "Allow workstation to communicate with the cluster API Server"
   from_port         = 443
   protocol          = "tcp"
