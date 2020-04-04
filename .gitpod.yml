@@ -6,3 +6,12 @@ vscode:
     - mauve.terraform@1.4.0:27r9VdcnEIBpa1jdjPSXdA==
 tasks:
   - command: scripts/install-gitpod.sh
+  - command: echo ''
+    openMode: split-right
+github:
+  prebuilds:
+    branches: true
+    pullRequestsFromForks: true
+    addComment: true
+    addBadge: true
+    addLabel: true
