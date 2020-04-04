@@ -5,6 +5,4 @@ vscode:
   extensions:
     - mauve.terraform@1.4.0:27r9VdcnEIBpa1jdjPSXdA==
 tasks:
-  - command: |
-      cd src
-      terraform init
+  - command: scripts/install-gitpod.sh

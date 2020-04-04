@@ -7,3 +7,9 @@ resource "aws_instance" "Gitpod-AWS" {
   instance_type = var.aws.instance_type
   key_name      = var.aws.key_name
 }
+
+data "aws_region" "current" {}
+
+data "aws_availability_zones" "available" {}
+
+provider "http" {}
