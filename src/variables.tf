@@ -10,17 +10,17 @@ variable "aws" {
     region        = "us-east-2"
     ami           = "ami-0fc20dd1da406780b"
     profile       = "default"
-    key_name      = "ubuntu"
+    key_name      = "power"
     instance_type = "t2.micro"
   }
 }
 variable "kubernetes" {
   type = object({
     cluster-name = string,
-    vpc-name = string
+    vpc-name     = string
   })
   default = {
     cluster-name = "gitpod-cluster"
-    vpc-name = "terraform-eks-gitpod-node"
+    vpc-name     = "terraform-eks-gitpod-node"
   }
 }

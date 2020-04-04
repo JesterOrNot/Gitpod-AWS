@@ -1,0 +1,52 @@
+resource "aws_iam_role" "gitpod-node" {
+  name = "terraform-eks-gitpod-node"
+
+  assume_role_policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_iam_role_policy_attachment" "gitpod-node-AmazonEKSWorkerNodePolicy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKSWorkerNodePolicy"
+  role       = aws_iam_role.gitpod-node.name
+}
+
+resource "aws_iam_role_policy_attachment" "gitpod-node-AmazonEKS_CNI_Policy" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEKS_CNI_Policy"
+  role       = aws_iam_role.gitpod-node.name
+}
+
+resource "aws_iam_role_policy_attachment" "gitpod-node-AmazonEC2ContainerRegistryReadOnly" {
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+  role       = aws_iam_role.gitpod-node.name
+}
+
+resource "aws_eks_node_group" "gitpod" {
+  cluster_name    = aws_eks_cluster.gitpod.name
+  node_group_name = "gitpod"
+  node_role_arn   = aws_iam_role.gitpod-node.arn
+  subnet_ids      = aws_subnet.gitpod[*].id
+
+  scaling_config {
+    desired_size = 1
+    max_size     = 1
+    min_size     = 1
+  }
+
+  depends_on = [
+    aws_iam_role_policy_attachment.gitpod-node-AmazonEKSWorkerNodePolicy,
+    aws_iam_role_policy_attachment.gitpod-node-AmazonEKS_CNI_Policy,
+    aws_iam_role_policy_attachment.gitpod-node-AmazonEC2ContainerRegistryReadOnly,
+  ]
+}
