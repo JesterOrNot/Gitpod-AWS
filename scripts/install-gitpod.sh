@@ -19,6 +19,13 @@ cd self-hosted || exit
 kubectl create -f utils/helm-2-tiller-sa-crb.yaml
 helm repo add charts.gitpod.io "https://charts.gitpod.io"
 helm dep update
+cat << EOF > values.yaml
+gitpod:
+  hostname: $(kubectl get svc --namespace default proxy --template "{{ range (index .status.loadBalancer.ingress 0) }}{{.}}{{ end }}")
+  components:
+    proxy:
+      loadBalancerIP: null
+EOF
 if [ -f "configuration.txt" ]; then
 	helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
 else
