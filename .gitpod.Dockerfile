@@ -13,7 +13,7 @@ RUN sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "aws
     && sudo ./aws/install \
     && cd .. \
     && sudo rm -rf awscli \
-    && bash -c "complete -C '/usr/local/bin/aws_completer' aws"
+    && bash -c "printf 'complete -C '/usr/local/bin/aws_completer' aws' >> ~/.bashrc"
 
 # Install aws-iam-authenticator
 RUN sudo curl -o aws-iam-authenticator "https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator" \
