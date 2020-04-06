@@ -7,7 +7,7 @@ terraform init
 did_fail="failed"
 # Take varriardic arguments from $1 on, the or statement will be used for error handling incase the install fails
 echo 'yes' | terraform apply "${@: 1}" || did_fail=""
-if [ -z $did_fail ]; then
+if [ -z "$did_fail" ]; then
     printf "\x1b[31mSomething went wrong during the installation of Gitpod Self Hosted for AWS. This should not happen. Destroying any dangling infrastructure. Please file an issue at https://github.com/gitpod-io/self-hosted\x1b[m"
 	echo 'yes' | terraform destroy
 	exit
@@ -34,7 +34,7 @@ gitpod:
 EOF
 # If self-hosted already exists there is a chance that there is extra configuration for self-hosted which the following honors
 if [ -f "configuration.txt" ]; then
-	helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
+	helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
 else
 	helm install gitpod .
 fi
