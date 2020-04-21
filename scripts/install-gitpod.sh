@@ -53,7 +53,7 @@ gitpod:
   installPodSecurityPolicies: true
 EOF
 if [ -f "configuration.txt" ]; then
-  helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
+  helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
 else
   helm install gitpod .
 fi
