@@ -46,7 +46,7 @@ gitpod:
   hostname: $domain
   components:
     proxy:
-      loadBalancerIP: $domain
+      loadBalancerIP: "$domain"
   authProviders:
   - id: "My ID"
     host: "$hosturl"
