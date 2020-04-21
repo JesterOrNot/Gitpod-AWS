@@ -61,7 +61,7 @@ gitpod:
 EOF
 # If self-hosted already exists there is a chance that there is extra configuration for self-hosted which the following honors
 if [ -f "configuration.txt" ]; then
-  helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
+  helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
 else
   helm install gitpod .
 fi
