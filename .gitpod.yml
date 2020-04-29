@@ -8,10 +8,8 @@ tasks:
   - command: |
       read -p "Do you want to deploy (y/n)? " deploy
       if [ $deploy = y ]; then
-        scripts/install-gitpod.sh
+        scripts/dev.sh
       fi
-  - command: echo ''
-    openMode: split-right
 github:
   prebuilds:
     branches: true
