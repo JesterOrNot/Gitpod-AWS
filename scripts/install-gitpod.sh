@@ -71,10 +71,10 @@ gitpod_selfhosted:
     customRegistry: false
 EOF
 echo 'values.yaml' >configuration.txt
-helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
+helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
 real_url=$(kubectl get svc | grep -E '^proxy' | awk '{print $4}')
 sed -i "2s/.*/  hostname: $real_url/" values.yaml
 sed -i "14s/.*/      callBackUrl: \"https:\/\/$real_url\/auth\/github\/callback\"/" values.yaml
-helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
+helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
 cd .. || exit
 printf "\x1b[1;33mDone! Have fun with self hosted! \x1b[m\n"
