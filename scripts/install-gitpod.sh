@@ -31,7 +31,7 @@ helm dep update
 # Get information
 read -p "Are you using GitHub or Gitlab (GH/GL): " provider
 read -p "What is your domain URL (e.g. example.com): " domain
-read -p "What is your Git host URL: (e.g. github.com)" hosturl
+read -p "What is your Git host URL: (e.g. github.com): " hosturl
 read -p "What is your oauth client id: " clientId
 read -p "What is the client secret: " clientSecret
 if [ "$provider" = "GH" ]; then
