@@ -6,10 +6,9 @@ vscode:
     - mauve.terraform@1.4.0:27r9VdcnEIBpa1jdjPSXdA==
 tasks:
   - command: |
-      read -p "Do you want to deploy (y/n)? " deploy
-      if [ $deploy = y ]; then
-        scripts/dev.sh
-      fi
+      cd src
+      terraform init
+      terraform apply -var-file dev.tfvars
 github:
   prebuilds:
     branches: true

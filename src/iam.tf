@@ -1,8 +1,8 @@
 # Allow EKS to interact with AWS stuffs
 resource "aws_iam_role" "gitpod-cluster" {
-  name = "terraform-eks-gitpod-cluster"
-
-  assume_role_policy = <<POLICY
+  name                  = var.iam.cluster-role-name
+  force_detach_policies = true
+  assume_role_policy    = <<POLICY
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -19,7 +19,8 @@ POLICY
 }
 
 resource "aws_iam_role" "gitpod-node" {
-  name = "terraform-eks-gitpod-node"
+  name                  = var.iam.node-role-name
+  force_detach_policies = true
 
   assume_role_policy = <<POLICY
 {
