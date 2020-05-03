@@ -32,3 +32,9 @@ variable "kubernetes" {
     vpc-name     = string
   })
 }
+variable "aws" {
+  type = object({
+    region  = string
+    profile = string
+  })
+}

@@ -6,7 +6,7 @@ variable "kubernetes" {
 }
 
 variable "subnet_count" {
-    type        = string
+  type = string
 }
 
 variable "aws" {

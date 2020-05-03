@@ -10,32 +10,52 @@ resource "aws_eks_cluster" "gitpod" {
   }
 
   provisioner "local-exec" {
-    command     = file("files/bootstrap.sh")
+    command     = <<EOF
+aws eks --region ${var.aws.region} update-kubeconfig --name ${var.kubernetes.cluster-name};
+kubectl apply -f '${local.config_map_aws_auth}';
+if ! [ -d self-hosted ]; then git clone "https://github.com/gitpod-io/self-hosted.git"; fi;
+cd self-hosted;
+kubectl create -f utils/helm-2-tiller-sa-crb.yaml || echo 'already configured';
+helm repo add charts.gitpod.io "https://charts.gitpod.io";
+helm dep update;
+cat <<EOT >values.yaml
+gitpod:
+  hostname: ${var.gitpod.domain}
+  components:
+    proxy:
+      loadBalancerIP: null
+  authProviders:
+  - id: "${var.gitpod.id}"
+    host: "${var.gitpod.host-url}"
+    protocol: "${var.gitpod.protocol}"
+    type: "${var.gitpod.provider}"
+    oauth:
+      clientId: "${var.gitpod.client-id}"
+      clientSecret: "${var.gitpod.client-secret}"
+      callBackUrl: "${var.gitpod.protocol}://${var.gitpod.provider}/auth/github/callback"
+      settingsUrl: "${var.gitpod.settings-url}"
+  installPodSecurityPolicies: true
+
+docker-registry:
+  enabled: true
+
+gitpod_selfhosted:
+  variants:
+    customRegistry: false
+EOT
+echo 'values.yaml' >configuration.txt;
+helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .;
+real_url=$(kubectl get svc | grep -E '^proxy' | awk '{print $4}');
+sed -i "2s/.*/  hostname: $real_url/" values.yaml;
+sed -i "14s/.*/      callBackUrl: \"https:\/\/$real_url\/auth\/github\/callback\"/" values.yaml;
+sleep 10;
+helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .;
+EOF
     interpreter = ["/bin/bash", "-c"]
   }
 
   depends_on = [
     aws_iam_role_policy_attachment.gitpod-cluster-AmazonEKSClusterPolicy,
     aws_iam_role_policy_attachment.gitpod-cluster-AmazonEKSServicePolicy,
-  ]
-}
-
-# Kubernetes worker nodes
-resource "aws_eks_node_group" "gitpod" {
-  cluster_name    = aws_eks_cluster.gitpod.name
-  node_group_name = "gitpod"
-  node_role_arn   = aws_iam_role.gitpod-node.arn
-  subnet_ids      = var.subnet_ids
-
-  scaling_config {
-    desired_size = 3
-    max_size     = 5
-    min_size     = 3
-  }
-
-  depends_on = [
-    aws_iam_role_policy_attachment.gitpod-node-AmazonEKSWorkerNodePolicy,
-    aws_iam_role_policy_attachment.gitpod-node-AmazonEKS_CNI_Policy,
-    aws_iam_role_policy_attachment.gitpod-node-AmazonEC2ContainerRegistryReadOnly,
   ]
 }

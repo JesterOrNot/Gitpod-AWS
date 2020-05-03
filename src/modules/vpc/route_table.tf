@@ -27,7 +27,7 @@ resource "aws_route_table_association" "gitpod" {
 
 resource "aws_route_table_association" "application" {
   count = var.subnet_count
- 
+
   subnet_id      = aws_subnet.application.*.id[count.index]
   route_table_id = aws_route_table.application.*.id[count.index]
 }
