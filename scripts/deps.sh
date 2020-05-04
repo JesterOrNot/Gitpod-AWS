@@ -14,13 +14,7 @@ if [ -z $(which kubectl) ]; then
     printf '\nsource <(kubectl completion bash)\n' >>~/.bashrc
 fi
 if [ -z $(which aws) ]; then
-    cd /tmp
-    sudo mkdir awscli
-    cd awscli
-    sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    sudo unzip awscliv2.zip \
-    sudo ./aws/install
-    echo -e "\ncomplete -C '/usr/local/bin/aws_completer' aws" >>~/.bashrc
+    brew install awscli
 fi
 if [ -z $(which terraform) ]; then
     cd /tmp
