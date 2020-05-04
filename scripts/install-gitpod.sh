@@ -54,12 +54,12 @@ gitpod:
   authProviders:
   - id: "Github"
     host: "$hosturl"
-    protocol: "https"
+    protocol: "http"
     type: "$providerType"
     oauth:
       clientId: "$clientId"
       clientSecret: "$clientSecret"
-      callBackUrl: "https://$domain/auth/github/callback"
+      callBackUrl: "http://$domain/auth/github/callback"
       settingsUrl: "$settingsUrl"
   installPodSecurityPolicies: true
 
