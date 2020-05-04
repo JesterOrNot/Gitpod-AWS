@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -ex
 if [ -z $(which helm) ]; then
     wget "https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz" \
     && tar xvf helm-v3.0.2-linux-amd64.tar.gz \
@@ -11,11 +11,7 @@ if [ -z $(which kubectl) ]; then
     echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
     sudo apt-get update
     sudo apt-get install -y kubectl
-<<<<<<< HEAD
-    printf 'source <(kubectl completion bash)' >>~/.bashrc
-=======
     printf '\nsource <(kubectl completion bash)\n' >>~/.bashrc
->>>>>>> 73c52ac329bdcfefc29706c8004bcb818e2f5819
 fi
 if [ -z $(which aws) ]; then
     cd /tmp
@@ -35,11 +31,7 @@ if [ -z $(which terraform) ]; then
     sudo unzip terraform_0.12.18_linux_amd64.zip
     chmod +x terraform
     sudo install terraform /usr/bin
-<<<<<<< HEAD
-    printf '\nterraform -install-autocomplete\n &>/dev/null\n' >>~/.bashrc
-=======
     printf '\nterraform -install-autocomplete &>/dev/null\n' >>~/.bashrc
->>>>>>> 73c52ac329bdcfefc29706c8004bcb818e2f5819
 fi
 if [ -z $(which git) ]; then
     sudo apt-get install -y git
