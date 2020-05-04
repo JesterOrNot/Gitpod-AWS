@@ -1,6 +1,6 @@
 FROM gitpod/workspace-full
 USER gitpod
-ENV TRIGGER_REBUILD=1
+ENV TRIGGER_REBUILD=2
 RUN brew install shellharden shfmt shellcheck
 # Install aws-iam-authenticator
 RUN curl -o aws-iam-authenticator "https://amazon-eks.s3-us-west-2.amazonaws.com/1.13.7/2019-06-11/bin/linux/amd64/aws-iam-authenticator" \

@@ -11,7 +11,11 @@ if [ -z $(which kubectl) ]; then
     echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
     sudo apt-get update
     sudo apt-get install -y kubectl
+<<<<<<< HEAD
     printf 'source <(kubectl completion bash)' >>~/.bashrc
+=======
+    printf '\nsource <(kubectl completion bash)\n' >>~/.bashrc
+>>>>>>> 73c52ac329bdcfefc29706c8004bcb818e2f5819
 fi
 if [ -z $(which aws) ]; then
     cd /tmp
@@ -20,9 +24,7 @@ if [ -z $(which aws) ]; then
     sudo curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     sudo unzip awscliv2.zip \
     sudo ./aws/install
-    cd ..
-    sudo rm -rf awscli
-    echo "complete -C '/usr/local/bin/aws_completer' aws" >>~/.bashrc
+    echo -e "\ncomplete -C '/usr/local/bin/aws_completer' aws" >>~/.bashrc
 fi
 if [ -z $(which terraform) ]; then
     cd /tmp
@@ -33,7 +35,11 @@ if [ -z $(which terraform) ]; then
     sudo unzip terraform_0.12.18_linux_amd64.zip
     chmod +x terraform
     sudo install terraform /usr/bin
+<<<<<<< HEAD
     printf '\nterraform -install-autocomplete\n &>/dev/null\n' >>~/.bashrc
+=======
+    printf '\nterraform -install-autocomplete &>/dev/null\n' >>~/.bashrc
+>>>>>>> 73c52ac329bdcfefc29706c8004bcb818e2f5819
 fi
 if [ -z $(which git) ]; then
     sudo apt-get install -y git
