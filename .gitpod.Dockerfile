@@ -2,6 +2,9 @@ FROM gitpod/workspace-full
 
 USER gitpod
 
+RUN sudo apt-get -qq update \
+    && sudo apt-get install -yq letsencrypt
+
 RUN brew install terraform kubectl shellharden shfmt shellcheck \
     && sudo env "PATH=$PATH" bash -c "printf 'source <(kubectl completion bash)\nterraform -install-autocomplete\n' >>~/.bashrc"
 
