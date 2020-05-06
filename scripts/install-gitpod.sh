@@ -95,8 +95,21 @@ find $WORKDIR/config/live -name "*.pem" -exec cp {} secrets/https-certificates \
 
 # Generate dhparams
 openssl dhparam -out secrets/https-certificates/dhparams.pem 2048
-
+cd ..
+IFS=':'
+read -ra ADDR <<< "$(terraform output mysql_endpoint)"
+endpoint="${ADDR[0]}"
 # Enable HTTPS
 echo values/https.yaml >> configuration.txt
+cat <<EOF >self-hosted/values/database.yaml
+gitpod:
+  db:
+    host: $endpoint
+    port: $(terraform output mysql_port)
+    password: $(terraform output mysql_password)
+
+  mysql:
+    enabled: true
+EOF
 # Done!
 printf "\x1b[1;33mDone! Have fun with self hosted! \x1b[m\n"

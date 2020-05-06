@@ -9,7 +9,7 @@ resource "aws_vpc" "gitpod" {
 
 # This will route external traffic through internet gateway
 resource "aws_subnet" "gitpod" {
-  count = 2
+  count                   = 2
   map_public_ip_on_launch = true
 
   availability_zone = data.aws_availability_zones.available.names[count.index]

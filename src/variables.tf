@@ -1,11 +1,11 @@
 variable "aws" {
   type = object({
-    region        = string
-    profile       = string
+    region  = string
+    profile = string
   })
   default = {
-    region        = "us-east-2"
-    profile       = "default"
+    region  = "us-east-2"
+    profile = "default"
   }
 }
 variable "kubernetes" {
@@ -16,5 +16,17 @@ variable "kubernetes" {
   default = {
     cluster-name = "gitpod-cluster"
     vpc-name     = "terraform-eks-gitpod-node"
+  }
+}
+variable "database" {
+  type = object({
+    name      = string
+    user-name = string
+    password  = string
+  })
+  default = {
+    name      = "gitpodDB",
+    user-name = "gitpod",
+    password  = "gitpod-password"
   }
 }
