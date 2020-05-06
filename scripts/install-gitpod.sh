@@ -72,26 +72,26 @@ gitpod_selfhosted:
     customRegistry: false
 EOF
 echo 'values.yaml' >configuration.txt
-helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
-export DOMAIN=$domain
-export WORKDIR=$HOME
+helm upgrade --install "$(for i in "$(cat configuration.txt)"; do echo -e "-f $i"; done)" gitpod .
+export DOMAIN="$domain"
+export WORKDIR="$HOME"
 export EMAIL
 certbot certonly \
-    --config-dir $WORKDIR/config \
-    --work-dir $WORKDIR/work \
-    --logs-dir $WORKDIR/logs \
+    --config-dir "$WORKDIR"/config \
+    --work-dir "$WORKDIR"/work \
+    --logs-dir "$WORKDIR"/logs \
     --manual \
     --preferred-challenges=dns \
-    --email $EMAIL \
+    --email "$EMAIL" \
     --server https://acme-v02.api.letsencrypt.org/directory \
     --agree-tos \
-    -d *.ws.$DOMAIN \
-    -d *.$DOMAIN \
-    -d $DOMAIN
+    -d *.ws."$DOMAIN" \
+    -d *."$DOMAIN" \
+    -d "$DOMAIN"
 
 # move them into place
 mkdir secrets/https-certificates
-find $WORKDIR/config/live -name "*.pem" -exec cp {} secrets/https-certificates \;
+find "$WORKDIR"/config/live -name "*.pem" -exec cp {} secrets/https-certificates \;
 
 # Generate dhparams
 openssl dhparam -out secrets/https-certificates/dhparams.pem 2048
