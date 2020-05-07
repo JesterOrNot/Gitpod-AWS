@@ -2,6 +2,9 @@ FROM gitpod/workspace-full
 
 USER gitpod
 
+RUN sudo apt-get -qq update \
+    && sudo apt-get install -yq letsencrypt
+
 RUN brew install terraform kubectl shellharden shfmt shellcheck \
     && sudo env "PATH=$PATH" bash -c "printf 'source <(kubectl completion bash)\nterraform -install-autocomplete\n' >>~/.bashrc"
 
@@ -20,10 +23,11 @@ RUN sudo curl -o aws-iam-authenticator "https://amazon-eks.s3-us-west-2.amazonaw
     && sudo chmod +x ./aws-iam-authenticator \
     && sudo mkdir -p $HOME/.aws-iam \
     && sudo cp ./aws-iam-authenticator $HOME/.aws-iam/aws-iam-authenticator
-ENV PATH=$PATH:$HOME/.aws-iam
 
 COPY . /tmp
 
 WORKDIR /tmp
 
 RUN ./deps.sh
+
+ENV PATH=$PATH:$HOME/.aws-iam:/workspace/Gitpod-AWS/scripts

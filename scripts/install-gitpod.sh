@@ -3,7 +3,7 @@
 set -ex
 cd src || exit
 if [[ ! "$@" =~ '--dev' ]]; then
-    terraform init
+    terraform init || echo 'initialized already'
     did_fail="failed"
     # Take varriardic arguments from $1 on, the or statement will be used for error handling incase the install fails
     echo 'yes' | terraform apply "$@" || did_fail=""
@@ -32,6 +32,7 @@ helm dep update
 read -p "Are you using GitHub or Gitlab (GH/GL): " provider
 read -p "What is your domain URL (e.g. example.com): " domain
 read -p "What is your Git host URL: (e.g. github.com): " hosturl
+read -p "What is your email: " EMAIL
 read -p "What is your oauth client id: " clientId
 read -p "What is the client secret: " clientSecret
 if [ "$provider" = "GH" ]; then
@@ -72,9 +73,43 @@ gitpod_selfhosted:
 EOF
 echo 'values.yaml' >configuration.txt
 helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
-real_url=$(kubectl get svc | grep -E '^proxy' | awk '{print $4}')
-sed -i "2s/.*/  hostname: $real_url/" values.yaml
-sed -i "14s/.*/      callBackUrl: \"https:\/\/$real_url\/auth\/github\/callback\"/" values.yaml
-helm upgrade --install $(for i in $(cat configuration.txt); do echo -e "-f $i"; done) gitpod .
-cd .. || exit
+export DOMAIN=$domain
+export WORKDIR=$HOME
+export EMAIL
+certbot certonly \
+    --config-dir $WORKDIR/config \
+    --work-dir $WORKDIR/work \
+    --logs-dir $WORKDIR/logs \
+    --manual \
+    --preferred-challenges=dns \
+    --email $EMAIL \
+    --server https://acme-v02.api.letsencrypt.org/directory \
+    --agree-tos \
+    -d *.ws.$DOMAIN \
+    -d *.$DOMAIN \
+    -d $DOMAIN
+
+# move them into place
+mkdir secrets/https-certificates
+find $WORKDIR/config/live -name "*.pem" -exec cp {} secrets/https-certificates \;
+
+# Generate dhparams
+openssl dhparam -out secrets/https-certificates/dhparams.pem 2048
+cd ..
+IFS=':'
+read -ra ADDR <<< "$(terraform output mysql_endpoint)"
+endpoint="${ADDR[0]}"
+# Enable HTTPS
+echo values/https.yaml >> configuration.txt
+cat <<EOF >self-hosted/values/database.yaml
+gitpod:
+  db:
+    host: $endpoint
+    port: $(terraform output mysql_port)
+    password: $(terraform output mysql_password)
+
+  mysql:
+    enabled: true
+EOF
+# Done!
 printf "\x1b[1;33mDone! Have fun with self hosted! \x1b[m\n"
